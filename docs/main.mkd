@@ -1,0 +1,67 @@
+## 📦 GoAPI CLI - Project Generator for Go
+
+Una CLI para generar una estructura básica de backend en Go utilizando **Gin** y **GORM**.
+
+---
+
+### 🎯 Objetivo
+
+Crear rápidamente un proyecto backend en Go con una estructura limpia, escalable y productiva.
+
+---
+
+### 🧰 Tabla de Comandos
+
+| Comando                                | Descripción                                                          |     |
+| -------------------------------------- | -------------------------------------------------------------------- | --- |
+| `goapi --version`                      | Muestra la versión actual del CLI.                                   |     |
+| `goapi --help`                         | Muestra la ayuda general con los comandos disponibles.               |     |
+| `goapi new [nombre-proyecto]`          | Crea una nueva estructura de proyecto con el nombre dado.            |     |
+| `goapi generate m/module [nombre]`     | Genera un módulo completo (modelo, repositorio, servicio, endpoint). |     |
+| `goapi generate [nombre] --f`          | Crea un archivo `.go` con el nombre indicado.                        |     |
+| `goapi generate [nombre] --d`          | Crea un directorio con el nombre indicado.                           |     |
+| `goapi g [nombre]`                     | Alias de `generate`.                                                 |     |
+| \`goapi create \[archivo directorio]\` | Crea un archivo o directorio personalizado.                          |     |
+
+---
+
+### 🗂️ Detalles por Comando
+
+| Comando                        | Acción                | Genera                                                                                              |
+| ------------------------------ | --------------------- | --------------------------------------------------------------------------------------------------- |
+| `goapi new my-api`             | Inicializa proyecto   | Estructura base de carpetas y archivos principales (`main.go`, `internal/`, `pkg/`, `tools/`, etc.) |
+| `goapi generate m/module user` | Crea módulo "user"    | `internal/user/{router.go, endpoint.go, service.go, repository.go, model.go}`                       |
+| `goapi generate logger --f`    | Archivo manual        | Crea `logger.go` si no existe                                                                       |
+| `goapi generate utils --d`     | Directorio manual     | Crea `utils/` si no existe                                                                          |
+| `goapi create utils/logger.go` | Archivo personalizado | Crea `utils/logger.go` si no existe                                                                 |
+
+---
+
+### 📁 Estructura del Proyecto Generado
+
+| Carpeta/Archivo                  | Propósito                                                                              |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
+| `main.go`                        | Punto de entrada del proyecto; inicia routers y servicios.                             |
+| `internal/`                      | Contiene todos los módulos organizados por entidad (por ejemplo: `user/`, `product/`). |
+| `pkg/`                           | Paquetes reutilizables, como la conexión a base de datos.                              |
+| `pkg/db/`                        | Configuración de la base de datos (PostgreSQL + GORM).                                 |
+| `tools/`                         | Herramientas adicionales como scripts, utilidades, seeds, etc.                         |
+| `tools/seed/`                    | Archivos para poblar la base de datos.                                                 |
+| `tools/seed/seed-db-main.go`     | Ejecuta todos los seeds definidos.                                                     |
+| `tools/seed/seed-db-[nombre].go` | Seed individual por cada módulo o tabla.                                               |
+| `.env`                           | Variables de entorno.                                                                  |
+| `go.mod`                         | Módulo de Go con dependencias.                                                         |
+
+#### 📦 Estructura por Módulo en `internal/`
+
+| Archivo         | Descripción                                                          |
+| --------------- | -------------------------------------------------------------------- |
+| `router.go`     | Configura las rutas del módulo usando Gin.                           |
+| `endpoint.go`   | Define los handlers que responden a las rutas, usando los servicios. |
+| `service.go`    | Lógica de negocio: transformación, validación, etc.                  |
+| `repository.go` | Acceso a base de datos, usando GORM.                                 |
+| `model.go`      | Estructura del modelo de base de datos.                              |
+
+---
+
+✅ ¿Listo para iterar sobre ideas de mejora o quieres traducirlo al inglés también?
