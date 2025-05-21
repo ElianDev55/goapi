@@ -17,7 +17,6 @@ func CreateDirectories(listD []string) error {
 }
 
 func CreateFiles(listF []string) error {
-	fmt.Println("Creating files")
 	for _, file := range listF {
 		_, err := os.Create(file)
 
@@ -28,7 +27,6 @@ func CreateFiles(listF []string) error {
 	
 	return nil
 }
-
 
 func AddPathTo(initialPath string, args []string) []string {
 

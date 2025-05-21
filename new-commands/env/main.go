@@ -8,6 +8,7 @@ var namesDirs = []string{
 	"pkg/db",
 	"tools",
 	"tools/seed",
+	"tools/config",
 }
 
 var nameFiles = []string{
