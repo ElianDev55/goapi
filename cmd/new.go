@@ -22,6 +22,10 @@ var newCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		
 
+		var logger = libs.LoggerP{
+			Filename: "cmd/new.go",
+		}
+	
 		namesDirs := env.GenerateNamesDirs()
 		nameFiles := env.GenerateNameFiles()
 
@@ -29,49 +33,49 @@ var newCmd = &cobra.Command{
 		newListFiles := libs.AddPathTo(args[0], nameFiles)
 
 		errD1 := libs.CreateDirectories(args)
-		libs.Info("Creating main directory")
+		logger.InfoLogger("CREATING MAIN DIRECTORY")
 		errD2 := libs.CreateDirectories(newListDirs)
-		libs.Info("Creating directories")
+		logger.InfoLogger("CREATING DIRECTORIES")
 		errF  := libs.CreateFiles(newListFiles)
-		libs.Info("Creating files type .go")
+		logger.InfoLogger("CREATING FILES TYPE .GO")
 
 		if errD1 != nil || errD2 != nil  || errF != nil {
-			libs.Error("Error creating directories or files, pls check the path")
+			logger.ErrorLogger("ERROR CREATING DIRECTORIES OR FILES, PLS CHECK THE PATH", errD1)
 			return
 		}
 
 		errSeed := newcommands.Seed(args[0])
 		
 		if errSeed != nil {
-			libs.Error("Error creating seed file, pls check the path")
+			logger.ErrorLogger("ERROR CREATING SEED FILE, PLS CHECK THE PATH", errSeed)
 			return
 		}
 
 		errDbConfig := newcommands.DbConfig(args[0])
 		if errDbConfig != nil {
-			libs.Error("Error creating db config file, pls check the path")
+			logger.ErrorLogger("ERROR CREATING DB CONFIG FILE, PLS CHECK THE PATH", errDbConfig)
 			return
 		}
 
 		errExampleEnv := newcommands.ExampleEnv(args[0])
 		if errExampleEnv != nil {
-			libs.Error("Error creating example env file, pls check the path")
+			logger.ErrorLogger("ERROR CREATING EXAMPLE ENV FILE, PLS CHECK THE PATH", errExampleEnv)
 			return
 		}
 
 		errGoMod := newcommands.GoMod(args[0])
 		if errGoMod != nil {
-			libs.Error("Error creating go mod file, pls check the path")
+			logger.ErrorLogger("ERROR CREATING GO MOD FILE, PLS CHECK THE PATH", errGoMod)
 			return
 		}
 
 		errGoSum := newcommands.GoSum(args[0])
 		if errGoSum != nil {
-			libs.Error("Error creating go sum file, pls check the path")
+			logger.ErrorLogger("ERROR CREATING GO SUM FILE, PLS CHECK THE PATH", errGoSum)
 			return
 		}
 
-		libs.Info("Finishing creating project whit the name: " + args[0])
+		logger.InfoLogger("FINISHING CREATING PROJECT WHIT THE NAME: " + args[0])
 		
 	},
 }

@@ -11,31 +11,25 @@ import "log"
 		Reset  = "\033[0m"
 	)
 
-
-
-	func Info(message string) {
-
-		log.SetPrefix("INFO: ")
-		log.Println(Green + "INFO: " + message + Reset)
-		log.SetFlags(log.LstdFlags | log.Lshortfile)
-
+	type LoggerP struct {
+		Filename  string
 	}
 
 
-	func Warning(message string) {
+	func (lp *LoggerP) InfoLogger(message string) {
+		log.Println("LOCATION: "+ lp.Filename + "  " + Green + "INFO: " + message + Reset)
+		log.SetFlags(log.LstdFlags)
+	}
 
-		log.SetPrefix("WARNING: ")
-		log.Println(Yellow + "WARNING: " + message + Reset)
-		log.SetFlags(log.LstdFlags | log.Lshortfile)
 
+	func (lp *LoggerP) WarningLogger(message string) {
+		log.Println("LOCATION: "+ lp.Filename + "  " + Yellow + "WARNING: " + message + Reset)
+		log.SetFlags(log.LstdFlags)
 	}
 
 
 
-	func Error(message string) {
-
-		log.SetPrefix("ERROR: ")
-		log.Println(Red + "ERROR: " + message + Reset)
-		log.SetFlags(log.LstdFlags | log.Lshortfile)
-
+	func (lp *LoggerP) ErrorLogger(message string, error error ) {
+		log.Println("LOCATION: "+ lp.Filename + "  " + Red + "ERROR: " + message + Reset + error.Error())
+		log.SetFlags(log.LstdFlags)
 	}

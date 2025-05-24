@@ -3,12 +3,21 @@ package newcommands
 import (
 	"fmt"
 
+	"github.com/ElianDev55/goapi/libs"
 	example_env "github.com/ElianDev55/goapi/new-commands/example-env"
 	db_config "github.com/ElianDev55/goapi/new-commands/tools/config"
 	"github.com/ElianDev55/goapi/new-commands/tools/seed"
 )
 
+
+
 func Seed (mainPath string) error {
+
+	var logger = libs.LoggerP{
+		Filename: "new-commands/tools/seed/seed.go",
+	}
+	
+
 	content := `
 	
 	package db
@@ -67,7 +76,7 @@ func ConnectionDb() (*gorm.DB,error) {
 
 }
 	`
-	err := seed.Create(content, mainPath)
+	err := seed.Create(&logger,content, mainPath)
 
 	if err != nil {
 		fmt.Println("Error creating seed file:", err)
@@ -80,6 +89,11 @@ func ConnectionDb() (*gorm.DB,error) {
 
 
 func DbConfig (mainPath string) error {
+
+	var logger = libs.LoggerP{
+		Filename: "new-commands/tools/config/db-config.go",
+	}
+
 	content := `
 	package config
 
@@ -122,7 +136,7 @@ func LoadEnvDb() (*EnvDb, error) {
 }
 
 	`
-	err := db_config.Create(content, mainPath)
+	err := db_config.Create(&logger,content, mainPath)
 
 	if err != nil {
 		fmt.Println("Error creating db config file:", err)
@@ -135,6 +149,12 @@ func LoadEnvDb() (*EnvDb, error) {
 
 
 func ExampleEnv (mainPath string) error {
+
+	
+	var logger = libs.LoggerP{
+		Filename: "new-commands/example-env/explample-env.go",
+	}
+
 	content := `
 	DATABASE_HOST= 
 	DATABASE_USER=
@@ -144,7 +164,7 @@ func ExampleEnv (mainPath string) error {
 	DATABASE_DEBUG=
 	DATABASE_AUTOMIGRATE=
 	`
-	err := example_env.Create(content, mainPath)
+	err := example_env.Create(&logger,content, mainPath)
 
 	if err != nil {
 		fmt.Println("Error creating db config file:", err)
@@ -156,6 +176,12 @@ func ExampleEnv (mainPath string) error {
 }
 
 func GoMod(mainPath string) error {
+
+	var logger = libs.LoggerP{
+		Filename: "new-commands/example-env/explample-env.go",
+	}
+
+
     content := fmt.Sprintf(
 `module  github.com/ElianDev55/%s
 
@@ -202,7 +228,7 @@ require (
     gorm.io/gorm v1.25.12 // indirect
 )`, mainPath)
 
-    err := example_env.CreateGoModFile(content, mainPath)
+    err := example_env.CreateGoModFile(&logger,content, mainPath)
 
     if err != nil {
         fmt.Println("Error creating go.mod file:", err)
@@ -213,6 +239,10 @@ require (
 }
 
 func GoSum(mainPath string) error {
+	var logger = libs.LoggerP{
+		Filename: "new-commands/example-env/explample-env.go",
+	}
+
 	content := `
 github.com/bytedance/sonic v1.13.1 h1:Jyd5CIvdFnkOWuKXr+wm4Nyk2h0yAFsr8ucJgEasO3g=
 github.com/bytedance/sonic v1.13.1/go.mod h1:o68xyaF9u2gvVBuGHPlUVCy+ZfmNNO5ETf1+KgkJhz4=
@@ -316,7 +346,7 @@ gorm.io/gorm v1.25.12 h1:I0u8i2hWQItBq1WfE0o2+WuL9+8L21K9e2HHSTE/0f8=
 gorm.io/gorm v1.25.12/go.mod h1:xh7N7RHfYlNc5EmcI/El95gXusucDrQnHXe0+CgWcLQ=
 nullprogram.com/x/optparse v1.0.0/go.mod h1:KdyPE+Igbe0jQUrVfMqDMeJQIJZEuyV7pjYmp6pbG50=
 rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=`
-	err := example_env.CreateGoSumFile(content, mainPath)
+	err := example_env.CreateGoSumFile(&logger,content, mainPath)
 	if err != nil {
 		fmt.Println("Error creating go.sum file:", err)
 		return err
