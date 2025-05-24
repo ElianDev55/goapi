@@ -5,6 +5,8 @@ import (
 
 	"github.com/ElianDev55/goapi/libs"
 	example_env "github.com/ElianDev55/goapi/new-commands/example-env"
+	main_file "github.com/ElianDev55/goapi/new-commands/main"
+	"github.com/ElianDev55/goapi/new-commands/pkg/db"
 	db_config "github.com/ElianDev55/goapi/new-commands/tools/config"
 	"github.com/ElianDev55/goapi/new-commands/tools/seed"
 )
@@ -353,3 +355,137 @@ rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=`
 	}
 	return nil
 }
+
+
+func PkgDb(mainPath string) error {
+	var logger = libs.LoggerP{
+		Filename: "/pkg/db/main.go",
+	}
+
+	content := `
+	package db
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/ElianDev55/service-sign-language/internal/user"
+	"github.com/ElianDev55/service-sign-language/tools/config"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+
+
+
+func ConnectionDb() (*gorm.DB,error) {
+	envDb, errEnvDb := config.LoadEnvDb()
+
+	if errEnvDb != nil {
+		fmt.Println(errEnvDb)
+	}
+
+	dsn := fmt.Sprintf(
+        "host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+        envDb.DatabaseHost,
+        envDb.DatabaseUser,
+        envDb.DatabasePassword,
+        envDb.DatabaseName,
+        envDb.DatabasePort,
+    )
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	if envDb.DatabaseDebug == "TRUE" {
+		db = db.Debug()
+	}
+
+	if envDb.DatabaseAutoMigrate == "TRUE"{
+		
+		errMigate := db.AutoMigrate(&user.User{})
+		
+		if errMigate != nil{
+			log.Println(errMigate)
+		}
+
+	}
+
+	return db, nil
+
+}
+	`
+	err := db.Create(&logger,content, mainPath)
+	if err != nil {
+		fmt.Println("Error creating go.sum file:", err)
+		return err
+	}
+	return nil
+}
+
+
+func Main(mainPath string) error {
+	var logger = libs.LoggerP{
+		Filename: "/new-commands/main/main.go",
+	}
+
+	content := fmt.Sprintf(`
+	
+	package main
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/ElianDev55/service-sign-language/internal/user"
+	"github.com/ElianDev55/service-sign-language/pkg/db"
+	"github.com/ElianDev55/service-sign-language/tools/seed"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
+
+
+func main() {
+	db, errDb := db.ConnectionDb()
+	if errDb != nil {
+		log.Println(errDb)
+	}
+	erroSeedDb := seed.SeedDb(db)
+	if erroSeedDb != nil {
+		log.Println(erroSeedDb)
+	}
+
+	router := gin.Default()
+
+
+    config := cors.DefaultConfig()
+    config.AllowOrigins = []string{"http://localhost:4200"}
+    config.AllowMethods = []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"}
+    config.AllowHeaders = []string{"Content-Type"}
+
+		 router.Use(cors.New(config))
+
+
+	api := router.Group("/api")
+	routerUser := user.NewRouterUser(db, api)
+	{
+		routerUser.RouterUser()
+	}
+
+	log.Println("Server on in  http://localhost:3100")
+	http.ListenAndServe(":3100",router)
+}
+
+	`,mainPath, mainPath)
+	err := main_file.Create(&logger,content, mainPath)
+	if err != nil {
+		fmt.Println("Error creating go.sum file:", err)
+		return err
+	}
+	return nil
+}
+

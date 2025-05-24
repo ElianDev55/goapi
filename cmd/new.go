@@ -75,6 +75,17 @@ var newCmd = &cobra.Command{
 			return
 		}
 
+		errPkgBd := newcommands.PkgDb(args[0])
+		if errPkgBd != nil {
+			logger.ErrorLogger("ERROR CREATING GO SUM FILE, PLS CHECK THE PATH", errPkgBd)
+			return
+		}
+
+		errMainFile := newcommands.Main(args[0])
+		if errMainFile != nil {
+			logger.ErrorLogger("ERROR CREATING GO SUM FILE, PLS CHECK THE PATH", errPkgBd)
+		}
+
 		logger.InfoLogger("FINISHING CREATING PROJECT WHIT THE NAME: " + args[0])
 		
 	},
