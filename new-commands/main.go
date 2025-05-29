@@ -20,64 +20,25 @@ func Seed (mainPath string) error {
 	}
 	
 
-	content := `
-	
-	package db
+	content := `package seed
 
-import (
-	"fmt"
-	"log"
-
-	"github.com/ElianDev55/service-sign-language/internal/user"
-	"github.com/ElianDev55/service-sign-language/tools/config"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 
 
+/*
+func SeedDb(db *gorm.DB) error {
 
-func ConnectionDb() (*gorm.DB,error) {
-	envDb, errEnvDb := config.LoadEnvDb()
+	err := SeedDbUser(db)
 
-	if errEnvDb != nil {
-		fmt.Println(errEnvDb)
-	}
-
-	dsn := fmt.Sprintf(
-        "host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
-        envDb.DatabaseHost,
-        envDb.DatabaseUser,
-        envDb.DatabasePassword,
-        envDb.DatabaseName,
-        envDb.DatabasePort,
-    )
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	
 	if err != nil {
-		fmt.Println(err)
-		return nil, err
+		return err
 	}
 
-	if envDb.DatabaseDebug == "TRUE" {
-		db = db.Debug()
-	}
+	return nil
+	*/
 
-	if envDb.DatabaseAutoMigrate == "TRUE"{
-		
-		errMigate := db.AutoMigrate(&user.User{})
-		
-		if errMigate != nil{
-			log.Println(errMigate)
-		}
-
-	}
-
-	return db, nil
-
-}
-	`
+}	`
 	err := seed.Create(&logger,content, mainPath)
 
 	if err != nil {
@@ -362,21 +323,17 @@ func PkgDb(mainPath string) error {
 		Filename: "/pkg/db/main.go",
 	}
 
-	content := `
+	content := fmt.Sprintf(`
 	package db
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/ElianDev55/service-sign-language/internal/user"
-	"github.com/ElianDev55/service-sign-language/tools/config"
+	"github.com/ElianDev55/%s/tools/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-
-
 
 func ConnectionDb() (*gorm.DB,error) {
 	envDb, errEnvDb := config.LoadEnvDb()
@@ -386,13 +343,13 @@ func ConnectionDb() (*gorm.DB,error) {
 	}
 
 	dsn := fmt.Sprintf(
-        "host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
-        envDb.DatabaseHost,
-        envDb.DatabaseUser,
-        envDb.DatabasePassword,
-        envDb.DatabaseName,
-        envDb.DatabasePort,
-    )
+		"host=%%s user=%%s password=%%s dbname=%%s port=%%s sslmode=disable TimeZone=Asia/Shanghai",
+		envDb.DatabaseHost,
+		envDb.DatabaseUser,
+		envDb.DatabasePassword,
+		envDb.DatabaseName,
+		envDb.DatabasePort,
+	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	
@@ -407,18 +364,20 @@ func ConnectionDb() (*gorm.DB,error) {
 
 	if envDb.DatabaseAutoMigrate == "TRUE"{
 		
+	/*
 		errMigate := db.AutoMigrate(&user.User{})
 		
 		if errMigate != nil{
 			log.Println(errMigate)
 		}
+			*/
 
 	}
 
 	return db, nil
 
 }
-	`
+	`, mainPath)
 	err := db.Create(&logger,content, mainPath)
 	if err != nil {
 		fmt.Println("Error creating go.sum file:", err)
@@ -441,9 +400,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ElianDev55/service-sign-language/internal/user"
-	"github.com/ElianDev55/service-sign-language/pkg/db"
-	"github.com/ElianDev55/service-sign-language/tools/seed"
+	"github.com/ElianDev55/%s/pkg/db"
+	"github.com/ElianDev55/%s/tools/seed"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -462,25 +420,27 @@ func main() {
 	router := gin.Default()
 
 
-    config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:4200"}
-    config.AllowMethods = []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"}
-    config.AllowHeaders = []string{"Content-Type"}
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:4200"}
+	config.AllowMethods = []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Content-Type"}
 
 		 router.Use(cors.New(config))
 
 
 	api := router.Group("/api")
+	/*
 	routerUser := user.NewRouterUser(db, api)
 	{
 		routerUser.RouterUser()
 	}
+		*/
 
 	log.Println("Server on in  http://localhost:3100")
 	http.ListenAndServe(":3100",router)
 }
 
-	`,mainPath, mainPath)
+	`, mainPath, mainPath)
 	err := main_file.Create(&logger,content, mainPath)
 	if err != nil {
 		fmt.Println("Error creating go.sum file:", err)
